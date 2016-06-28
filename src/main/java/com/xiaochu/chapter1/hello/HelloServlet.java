@@ -1,4 +1,4 @@
-package com.xiaochu.chapter1;
+package com.xiaochu.chapter1.hello;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
