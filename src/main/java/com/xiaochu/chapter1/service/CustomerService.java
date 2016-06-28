@@ -44,8 +44,6 @@ public class CustomerService {
          }
         }catch (Exception e){
             LOGGER.error("execute sql failure!",e);
-        }finally {
-            DataBaseHelper.closeConnection();
         }
         return customerList ;
     }
