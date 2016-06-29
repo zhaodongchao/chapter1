@@ -3,6 +3,7 @@ package com.xiaochu.chapter1.test;
 import com.xiaochu.chapter1.helper.DataBaseHelper;
 import com.xiaochu.chapter1.model.Customer;
 import com.xiaochu.chapter1.service.CustomerService;
+import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,6 +29,7 @@ public class CustomerServiceTest {
     @Test
     public void getCustomerList(){
         List<Customer> list = customerService.getCustomerList("");
+        Assert.assertEquals(3,list.size());
     }
 
     @Test

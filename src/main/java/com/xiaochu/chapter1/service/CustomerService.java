@@ -55,7 +55,7 @@ public class CustomerService {
      */
     public List<Customer> getCustomerList(String keyWord){
         String sql = "select * from customer ";
-        return  DataBaseHelper.queryEntityList(Customer.class,sql) ;
+        return  DataBaseHelper.queryEntityList(Customer.class,sql,keyWord) ;
     }
 
     /**

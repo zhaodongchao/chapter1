@@ -1,7 +1,7 @@
 package com.xiaochu.chapter1.helper;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.xiaochu.chapter1.util.PropertyUtil;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -9,6 +9,7 @@ import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +29,7 @@ public final class DataBaseHelper {
      * 将Connection作为本地线程变量，这样Connection就不会出现线程安全问题。
     */
     public static final ThreadLocal<Connection> CONNECTION_HOLDER ;
-    public static final BasicDataSource DATA_SOURCE ;
+    public static final ComboPooledDataSource DATA_SOURCE ;
     public static final Logger LOGGER = LoggerFactory.getLogger(DataBaseHelper.class);
     public static final QueryRunner QUERY_RUNNER ;
     private static final String DRIVER;
@@ -53,11 +54,16 @@ public final class DataBaseHelper {
             LOGGER.error("can't load jdbc driver!", e);
         }*/
 
-        DATA_SOURCE = new BasicDataSource();
-        DATA_SOURCE.setDriverClassName(DRIVER);
-        DATA_SOURCE.setUrl(URL);
-        DATA_SOURCE.setUsername(USERNAME);
-        DATA_SOURCE.setPassword(PASSWORD);
+        DATA_SOURCE = new ComboPooledDataSource();
+        try {
+            DATA_SOURCE.setDriverClass(DRIVER);
+            DATA_SOURCE.setJdbcUrl(URL);
+            DATA_SOURCE.setUser(USERNAME);
+            DATA_SOURCE.setPassword(PASSWORD);
+        } catch (PropertyVetoException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -87,7 +93,7 @@ public final class DataBaseHelper {
         List<T> entityList = new ArrayList<T>();
         Connection connection = getConnection();
         try {
-            entityList = QUERY_RUNNER.query(connection, sql, new BeanListHandler<T>(entityClass), params);
+            entityList = QUERY_RUNNER.query(connection, sql, new BeanListHandler<T>(entityClass));
         } catch (SQLException sqle) {
             LOGGER.error("query " + entityClass.getName() + "List failure!", sqle);
         }
